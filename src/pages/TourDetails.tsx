@@ -105,7 +105,7 @@ const TourDetails = () => {
                 <h3 className="font-semibold mb-2">Select Date</h3>
                 <DatePicker
                   selected={selectedDate}
-                  onChange={(date) => setSelectedDate(date)}
+                  onChange={(date: Date) => setSelectedDate(date)}
                   minDate={new Date()}
                   className="w-full p-2 border rounded"
                   placeholderText="Choose a date"
