@@ -8,7 +8,7 @@ export const Navbar = () => {
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed w-full bg-white shadow-sm z-50"
+      className="absolute w-full bg-white/80 backdrop-blur-sm z-50"
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">

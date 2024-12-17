@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export const HeroSection = () => {
   return (
     <section className="relative h-screen bg-primary overflow-hidden">
-      <div className="container mx-auto px-4 h-full flex items-center">
+      <div className="container mx-auto px-4 h-full flex items-center pt-20">
         <div className="w-1/2 text-white">
           <motion.span 
             initial={{ opacity: 0 }}
