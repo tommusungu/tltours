@@ -1,0 +1,47 @@
+/* styles.css */
+.blog-details{
+  color: #4b5563;
+}
+.blog-details ul {
+  margin-left: 2rem;
+  list-style-type: none; /* Remove default list marker */
+}
+
+.blog-details ul li::before {
+  content: "•"; /* Insert tick mark before each list item */
+  margin-right: 0.5rem; /* Add some space between the tick mark and the list item text */
+
+  color: #1a237e;
+}
+
+
+.blog-details h1 {
+    margin-top: 0; /* mt-8 */
+    font-weight: bold; /* font-bold */
+    letter-spacing: -0.02em; /* tracking-tight */
+   
+    font-size: 1.6rem; /* sm:text-2xl */
+  }
+  .blog-details h2 {
+    margin-top: 0; /* mt-8 */
+    font-weight: 600;
+    letter-spacing: -0.02em; /* tracking-tight */
+    
+    color: #1a237e;
+    font-size: 1.25rem/* 20px */;
+    line-height: 1.75rem/* 28px */;
+  }
+  .blog-details h3 {
+    margin-top: 0; /* mt-8 */
+    font-weight: bold; /* font-bold */
+    letter-spacing: -0.02em; /* tracking-tight */
+   
+    font-size: 1.0rem; /* sm:text-2xl */
+  }
+  .blog-details p {
+    margin-top: 0; /* mt-6 */
+    font-size: 1rem; /* text-md */
+    line-height: 1.8; /* leading-8 */
+    color: #4b5563;
+  }
+  

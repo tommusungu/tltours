@@ -27,8 +27,8 @@ const features = [
 export const FeaturesSection = () => {
   return (
     <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 sm:px-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -37,7 +37,9 @@ export const FeaturesSection = () => {
               transition={{ delay: index * 0.1 }}
               className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow"
             >
-              <div className="mb-4 flex justify-center">{feature.icon}</div>
+              <div className="w-full flex justify-center items-center  mb-4">
+              <div className="flex justify-center items-center rounded-full bg-gray-100 p-3">{feature.icon}</div>
+              </div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
             </motion.div>

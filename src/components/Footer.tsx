@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 export const Footer = () => {
   return (
     <footer className="bg-primary text-white py-12">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-24">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">TourVisor</h3>
+            <h3 className="text-xl font-bold mb-4">TL Tours</h3>
             <p className="text-gray-300">
               Your trusted partner for unforgettable travel experiences.
             </p>
@@ -29,12 +29,12 @@ export const Footer = () => {
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-            <p className="text-gray-300">Email: info@tourvisor.com</p>
-            <p className="text-gray-300">Phone: +1 234 567 890</p>
+            <p className="text-gray-300">Email: tltraveltours@gmail.com</p>
+            <p className="text-gray-300">Phone: +33753164595</p>
           </div>
         </div>
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-          <p className="text-gray-300">© 2024 TourVisor. All rights reserved.</p>
+        <div className="border-t border-gray-400 mt-8 pt-8 text-center">
+          <p className="text-gray-300">© 2025 TL Tours. All rights reserved.</p>
         </div>
       </div>
     </footer>

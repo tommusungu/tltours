@@ -4,24 +4,24 @@ import { Link } from "react-router-dom";
 
 export const HeroSection = () => {
   return (
-    <section className="relative h-screen bg-primary overflow-hidden">
-      <div className="container mx-auto px-4 h-full flex items-center pt-20">
-        <div className="w-1/2 text-white">
+    <section className="relative h-fit bg-primary overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-24 h-full flex items-center sm:py-16 pb-36 sm:pb-16 pt-24">
+        <div className="w-full sm:w-1/2 text-white">
           <motion.span 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-lg mb-4 italic"
+            className="text-lg mb-2 sm:mb-4 italic"
           >
-            Natural Beauty
+            Tour with TL Tours
           </motion.span>
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-5xl font-bold mb-6"
+            className="text-5xl font-bold my-2 sm:my-4"
           >
             Discover The Most<br />Engaging Places
           </motion.h1>
-          <p className="text-lg mb-8 text-gray-200">
+          <p className="text-lg mb-3 sm:mb-6 text-gray-200">
             Start your journey with us and explore the world's most beautiful destinations.
           </p>
           <Link to="/tours">
@@ -30,9 +30,9 @@ export const HeroSection = () => {
             </Button>
           </Link>
         </div>
-        <div className="w-1/2">
+        <div className="w-1/2 hidden sm:flex">
           <img 
-            src="/lovable-uploads/8dc39654-4b08-40b4-b1fe-dbe25b65f487.png"
+            src="/tourOne.jpg"
             alt="Travelers exploring"
             className="w-full h-auto rounded-lg"
           />
