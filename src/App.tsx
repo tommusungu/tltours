@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import BlogPage from "./pages/BlogPage";
 import Success from "./pages/Success";
 import Failed from "./pages/Failed";
+import AITours from "./pages/AITours";
 import ScrollToTop from "./hooks/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blogs" element={<Blogs />} />
+          <Route path="/ai-tour-creator" element={<AITours />} />
           <Route path="/payment-successful" element={<Success />} />
           <Route path="/payment-failed" element={<Failed />} />
 

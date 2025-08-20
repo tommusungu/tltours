@@ -82,6 +82,15 @@ export const Navbar = () => {
               </Link>
 
               <Link
+                to="/ai-tour-creator"
+                className={`${
+                  isScrolled ? "text-gray-700" : "text-white"
+                } hover:text-primary-orange text-base transition-colors`}
+              >
+                AI Tour Creator
+              </Link>
+
+              <Link
                 to="/blogs"
                 className={`${
                   isScrolled ? "text-gray-700" : "text-white"
@@ -139,6 +148,13 @@ export const Navbar = () => {
                 className="text-gray-700 hover:text-primary-orange text-base transition-colors"
               >
                 Tours
+              </Link>
+              <Link
+                to="/ai-tour-creator"
+                onClick={() => handleNavigate("/ai-tour-creator")}
+                className="text-gray-700 hover:text-primary-orange text-base transition-colors"
+              >
+                AI Tour Creator
               </Link>
               <Link
                 to="/blogs"
