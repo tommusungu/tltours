@@ -8,12 +8,56 @@ import "react-datepicker/dist/react-datepicker.css";
 import Database from "@/hooks/Database";
 import BlogDetails from "@/components/blogs/BlogDetails";
 import CheckoutButton from "@/components/checkout/CheckoutButton";
+import { MapPin } from "lucide-react";
+
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// Simple Map Component using Google Maps Embed API
+const LocationMap = ({ lat, lng, title }: { lat: string; lng: string; title: string }) => {
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${lat},${lng}&zoom=15`;
+  
+  return (
+    <div className="w-full h-64 rounded-lg overflow-hidden border border-gray-200">
+      <iframe
+        src={mapUrl}
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title={`Map showing ${title} location`}
+      />
+    </div>
+  );
+};
+
+// Alternative: Interactive Map using OpenStreetMap (no API key needed)
+const OpenStreetMap = ({ lat, lng, title }: { lat: string; lng: string; title: string }) => {
+  const openMapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.01},${parseFloat(lat)-0.01},${parseFloat(lng)+0.01},${parseFloat(lat)+0.01}&layer=mapnik&marker=${lat},${lng}`;
+  
+  return (
+    <div className="w-full h-64 rounded-lg overflow-hidden border border-gray-200">
+      <iframe
+        src={openMapUrl}
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        title={`Map showing ${title} location`}
+      />
+    </div>
+  );
+};
 
 const TourDetails = () => {
   const { tours } = Database();
-  const { id } = useParams<{ id: string }>(); // Ensure id is properly typed
-  const [tour, setTour] = useState<any | null>(null); // State to store the tour data
-  const [mainImage, setMainImage] = useState<string>(""); // State to track the main image
+  const { slug } = useParams<{ slug: string }>();
+  const [tour, setTour] = useState<any | null>(null);
+  const [mainImage, setMainImage] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [counts, setCounts] = useState({
     adult: 0,
@@ -23,13 +67,15 @@ const TourDetails = () => {
   });
 
   useEffect(() => {
-    // Find the tour based on the id from URL
-    const fetchedTour = tours.find((event) => event.id === id);
+    if (!slug) return;
+
+    const fetchedTour = tours.find((event) => slugify(event.title) === slug);
     setTour(fetchedTour);
+
     if (fetchedTour) {
-      setMainImage(fetchedTour.image[0].downloadURL); // Set the first image as the default main image
+      setMainImage(fetchedTour.image[0].downloadURL);
     }
-  }, [id, tours]); // Re-run when id or tours change
+  }, [slug, tours]);
 
   const updateCount = (type: keyof typeof counts, increment: boolean) => {
     setCounts((prev) => ({
@@ -44,12 +90,20 @@ const TourDetails = () => {
       tour.price * 0.5 * counts.child
     : 0;
 
-  if (!tour) return <div>Loading or Tour not found...</div>; // Show a loading message or error
+  // Function to open location in Google Maps app/website
+  const openInMaps = () => {
+    if (tour?.location?.lat && tour?.location?.lng) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${tour.location.lat},${tour.location.lng}`;
+      window.open(url, '_blank');
+    }
+  };
+
+  if (!tour) return <div className="p-6 text-center">Loading or Tour not found...</div>;
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-
+      
       <div className="pt-24 pb-12">
         <div className="container mx-auto px-4 sm:px-16">
           <div className="grid md:grid-cols-3 gap-6">
@@ -71,8 +125,8 @@ const TourDetails = () => {
                         mainImage === image.downloadURL
                           ? "border-2 border-primary-orange"
                           : ""
-                      }`} // Add border if selected
-                      onClick={() => setMainImage(image.downloadURL)} // Set the clicked image as the main image
+                      }`}
+                      onClick={() => setMainImage(image.downloadURL)}
                     />
                   ))}
                 </div>
@@ -97,9 +151,58 @@ const TourDetails = () => {
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold mb-2">Meeting Point</h3>
-                  <p>{tour.location}</p>
+                  <p>
+                    {typeof tour.location === 'string' 
+                      ? tour.location 
+                      : tour.location?.address || 
+                        (tour.location?.lat && tour.location?.lng 
+                          ? `${tour.location.lat}, ${tour.location.lng}` 
+                          : 'Location details available'
+                        )
+                    }
+                  </p>
+                  {((typeof tour.location === 'object' && tour.location?.lat && tour.location?.lng) ||
+                    (tour.lat && tour.lng)) && (
+                    <button
+                      onClick={openInMaps}
+                      className="mt-2 flex items-center gap-2 text-primary-orange hover:text-primary-orange/80 transition-colors"
+                    >
+                      <MapPin size={16} />
+                      <span className="text-sm">View on Maps</span>
+                    </button>
+                  )}
                 </div>
               </div>
+
+              {/* Location Map */}
+              {(() => {
+                // Determine lat/lng from different possible structures
+                let lat, lng;
+                
+                if (typeof tour.location === 'object' && tour.location?.lat && tour.location?.lng) {
+                  lat = tour.location.lat;
+                  lng = tour.location.lng;
+                } else if (tour.lat && tour.lng) {
+                  lat = tour.lat;
+                  lng = tour.lng;
+                }
+                
+                return lat && lng ? (
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold mb-3">Meeting Point Location</h3>
+                    <OpenStreetMap 
+                      lat={lat} 
+                      lng={lng} 
+                      title={tour.title}
+                    />
+                    
+                    <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                      <MapPin size={14} />
+                      <span>Coordinates: {lat}, {lng}</span>
+                    </div>
+                  </div>
+                ) : null;
+              })()}
 
               <h2 className="text-2xl font-bold mb-4">What's Included</h2>
               <ul className="list-disc list-inside mb-6">
@@ -113,6 +216,8 @@ const TourDetails = () => {
               <div className="mt-3">
                 <BlogDetails blogDetails={tour.details} />
               </div>
+
+             
             </motion.div>
 
             {/* Booking Section */}
@@ -176,7 +281,7 @@ const TourDetails = () => {
                 </div>
 
                 <CheckoutButton
-                  tourId={id}
+                  tourId={slug}
                   tourTitle={tour.title}
                   imageURL={tour.image[0].downloadURL}
                   participants={counts}

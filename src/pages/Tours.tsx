@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { TourCard } from "@/components/TourCard";
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Menu } from "lucide-react"; // Icon for Hamburger Menu
+import { Menu } from "lucide-react";
 import Database from "@/hooks/Database";
 
 const Tours = () => {
@@ -17,7 +18,32 @@ const Tours = () => {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [durationRange, setDurationRange] = useState([0, 5]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Toggle state for filter
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [countryFilter, setCountryFilter] = useState(null);
+
+  const params = useParams();
+  
+  // Extract country from URL params
+  useEffect(() => {
+    if (params.country) {
+      // Check if it's a country (not a tour ID)
+      // Assume tour IDs are numeric or have a specific pattern
+      const isCountry = isNaN(parseInt(params.country)) && params.country.length > 2;
+      
+      if (isCountry) {
+        // Capitalize first letter and decode any URL encoding
+        const formattedCountry = decodeURIComponent(params.country)
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+        setCountryFilter(formattedCountry);
+      } else {
+        setCountryFilter(null);
+      }
+    } else {
+      setCountryFilter(null);
+    }
+  }, [params.country]);
 
   const handlePriceChange = (event) => {
     const { value } = event.target;
@@ -38,12 +64,17 @@ const Tours = () => {
       price = 0,
       availableDate = null,
       duration = "0",
+      country = "",
     } = tour;
 
     const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || category === selectedCategory;
     const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
     const matchesDate = !selectedDate || new Date(availableDate) >= selectedDate;
+    
+    // Country filtering based on URL
+    const matchesCountry = !countryFilter || 
+      country.toLowerCase() === countryFilter.toLowerCase();
 
     let durationInHours = 0;
     if (/day/i.test(duration)) {
@@ -64,8 +95,17 @@ const Tours = () => {
       durationInHours >= durationRange[0] * 24 &&
       durationInHours <= durationRange[1] * 24;
 
-    return matchesSearch && matchesCategory && matchesPrice && matchesDate && matchesDuration;
+    return matchesSearch && matchesCategory && matchesPrice && matchesDate && matchesDuration && matchesCountry;
   });
+
+  // Get unique countries for filter dropdown
+  const uniqueCountries = [...new Set(tours.map(tour => tour.country).filter(Boolean))];
+
+  // Dynamic page title based on country filter
+  const pageTitle = countryFilter ? `Tours in ${countryFilter}` : "All Tours";
+  const pageDescription = countryFilter 
+    ? `Discover amazing travel experiences in ${countryFilter}. Find the perfect tour for your next adventure.`
+    : "We're dedicated to creating unforgettable travel experiences that inspire and connect people around the world.";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,10 +116,17 @@ const Tours = () => {
         className="pt-24 pb-12 bg-primary text-white"
       >
         <div className="container px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">All Tours</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">{pageTitle}</h1>
           <p className="text-lg text-gray-200 max-w-2xl mx-auto">
-            We're dedicated to creating unforgettable travel experiences that inspire and connect people around the world.
+            {pageDescription}
           </p>
+          {countryFilter && (
+            <div className="mt-4">
+              <span className="inline-block bg-white/20 px-4 py-2 rounded-full text-sm">
+                Showing tours in {countryFilter}
+              </span>
+            </div>
+          )}
         </div>
       </motion.section>
       <div className="pt-8 pb-6">
@@ -105,6 +152,46 @@ const Tours = () => {
             }`}
           >
             <h2 className="text-2xl font-bold mb-4">Filter Tours</h2>
+            
+            {/* Country Filter Display (when filtering by URL) */}
+            {countryFilter && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                <h3 className="font-semibold mb-1 text-blue-800">Current Filter</h3>
+                <p className="text-sm text-blue-600">Showing tours in: {countryFilter}</p>
+                <a 
+                  href="/tours" 
+                  className="text-xs text-blue-500 hover:text-blue-700 underline"
+                >
+                  View all countries
+                </a>
+              </div>
+            )}
+
+            {/* Additional Country Filter (for manual selection) */}
+            {!countryFilter && uniqueCountries.length > 0 && (
+              <div className="mb-4">
+                <h3 className="font-semibold mb-2">Country</h3>
+                <select
+                  onChange={(e) => {
+                    const selectedCountry = e.target.value;
+                    if (selectedCountry && selectedCountry !== 'all') {
+                      const countrySlug = selectedCountry.toLowerCase().replace(/\s+/g, '-');
+                      window.location.href = `/tours/${countrySlug}`;
+                    }
+                  }}
+                  className="w-full p-2 border rounded"
+                  defaultValue="all"
+                >
+                  <option value="all">All Countries</option>
+                  {uniqueCountries.map(country => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="mb-4">
               <h3 className="font-semibold mb-2">Search</h3>
               <Input
@@ -134,10 +221,11 @@ const Tours = () => {
                 onChange={handlePriceChange}
                 className="w-full p-2 border rounded"
               >
-                <option value="0-100">€0 - €100</option>
+                <option value="0-50">€0 - €50</option>
+                <option value="51-100">€51 - €100</option>
                 <option value="101-200">€101 - €200</option>
-                <option value="201-300">€201 - €300</option>
-                <option value="301-500">€301 - €500</option>
+                <option value="201-1000">Above €201</option>
+                <option value="0-1000">Reset</option>
               </select>
             </div>
             <div className="mb-4">
@@ -173,7 +261,22 @@ const Tours = () => {
             {filteredTours.length ? (
               filteredTours.map((tour) => <TourCard key={tour.id} {...tour} />)
             ) : (
-              <p>No tours match your filters.</p>
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500 text-lg mb-2">
+                  {countryFilter 
+                    ? `No tours found in ${countryFilter} matching your filters.`
+                    : "No tours match your filters."
+                  }
+                </p>
+                {countryFilter && (
+                  <a 
+                    href="/tours" 
+                    className="text-blue-500 hover:text-blue-700 underline"
+                  >
+                    Browse all tours
+                  </a>
+                )}
+              </div>
             )}
           </motion.div>
         </div>

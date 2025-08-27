@@ -14,21 +14,40 @@ import Success from "./pages/Success";
 import Failed from "./pages/Failed";
 import AITours from "./pages/AITours";
 import ScrollToTop from "./hooks/ScrollToTop";
+import WebFont from "webfontloader";
+import { Suspense, useEffect } from "react";
+import LoadingScreen from "./pages/LoadingScreen";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ["Outfit", "DM Sans"],
+      },
+    });
+
+    // ReactGA.initialize("G-N2FWR5LGKZ");
+    // ReactGA.send({
+    //   hitType: "pageview",
+    //   page: window.location.pathname + window.location.search,
+    // });
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
       <ScrollToTop />
-
+      <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/tours" element={<Tours />} />
-          <Route path="/tours/:id" element={<TourDetails />} />
+              <Route path="/tours/:country" element={<Tours />} />
+              <Route path="/:slug" element={<TourDetails />} />
           <Route path="/blogs/:id" element={<BlogPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -38,9 +57,11 @@ const App = () => (
           <Route path="/payment-failed" element={<Failed />} />
 
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
+};
 
 export default App;

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Navbar = () => {
@@ -73,21 +73,20 @@ export const Navbar = () => {
               </Link>
 
               <Link
-                to="/tours"
+                to="/tours/france"
                 className={`${
                   isScrolled ? "text-gray-700" : "text-white"
                 } hover:text-primary-orange text-base transition-colors`}
               >
-                Tours
+                France
               </Link>
-
-              <Link
-                to="/ai-tour-creator"
+               <Link
+                to="/tours/ghana"
                 className={`${
                   isScrolled ? "text-gray-700" : "text-white"
                 } hover:text-primary-orange text-base transition-colors`}
               >
-                AI Tour Creator
+                Ghana
               </Link>
 
               <Link
@@ -107,9 +106,18 @@ export const Navbar = () => {
               >
                 About
               </Link>
+
+              <Link
+                to="/contact"
+                className={`${
+                  isScrolled ? "text-gray-700" : "text-white"
+                } hover:text-primary-orange text-base transition-colors`}
+              >
+                Contact
+              </Link>
             </div>
 
-            {/* Search and Contact Buttons */}
+            {/* Search and AI Tour Creator Buttons */}
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => handleNavigate("/tours")}
@@ -122,10 +130,11 @@ export const Navbar = () => {
                 <Search className="h-5 w-5" />
               </Button>
               <Button
-                onClick={() => handleNavigate("/contact")}
-                className="bg-primary-orange text-base hover:bg-primary-orange/90 text-white rounded-full px-6"
+                onClick={() => handleNavigate("/ai-tour-creator")}
+                className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-base hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-full px-6 flex items-center gap-2"
               >
-                Contact us
+                <Sparkles className="h-4 w-4" />
+                AI Tour Creator
               </Button>
             </div>
           </div>
@@ -150,11 +159,18 @@ export const Navbar = () => {
                 Tours
               </Link>
               <Link
-                to="/ai-tour-creator"
-                onClick={() => handleNavigate("/ai-tour-creator")}
+                to="/tours/france"
+                onClick={() => handleNavigate("/tours")}
                 className="text-gray-700 hover:text-primary-orange text-base transition-colors"
               >
-                AI Tour Creator
+                France
+              </Link>
+               <Link
+                to="/tours/ghana"
+                onClick={() => handleNavigate("/tours")}
+                className="text-gray-700 hover:text-primary-orange text-base transition-colors"
+              >
+                Ghana
               </Link>
               <Link
                 to="/blogs"
@@ -170,11 +186,19 @@ export const Navbar = () => {
               >
                 About
               </Link>
-              <Button
+              <Link
+                to="/contact"
                 onClick={() => handleNavigate("/contact")}
-                className="bg-primary-orange text-base hover:bg-primary-orange/90 text-white rounded-full px-6"
+                className="text-gray-700 hover:text-primary-orange text-base transition-colors"
               >
-                Contact us
+                Contact
+              </Link>
+              <Button
+                onClick={() => handleNavigate("/ai-tour-creator")}
+                className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-base hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-full px-6 flex items-center gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                AI Tour Creator
               </Button>
             </div>
           </div>
